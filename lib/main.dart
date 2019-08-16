@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc_sample/src/counter/counter_page.dart';
 import 'package:flutter_bloc_sample/src/infiniteList/post_page.dart';
+import 'package:flutter_bloc_sample/src/listCategory/list_category.dart';
 import 'package:flutter_bloc_sample/src/loginForm/login_page.dart';
 import 'package:flutter_bloc_sample/src/timer/timer_page.dart';
 
@@ -70,6 +71,13 @@ class _MyHomePageState extends State<MyHomePage> {
             onTap: () {
               Navigator.of(context).pop();
               Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginPageMain()));
+            },
+          ),
+          ListTile(
+            title: Text('List category'),
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => ListCategoryPage()));
             },
           )
         ],
