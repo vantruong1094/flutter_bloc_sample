@@ -47,9 +47,19 @@ class _ListCategoryBodyState extends State<ListCategoryBody> {
         bloc: _bloc,
         builder: (context, state) {
           if (state is ListCategoryLoaded) {
-            return Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: _buildCategoryGridView(context, state),
+            return Stack(
+              children: <Widget>[
+                Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: _buildCategoryGridView(context, state),
+                )
+              ],
             );
           } else {
             return Center(

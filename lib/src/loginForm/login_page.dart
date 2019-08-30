@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bloc_sample/src/loginForm/login_bloc.dart';
@@ -6,11 +5,14 @@ import 'package:flutter_bloc_sample/src/loginForm/login_bloc.dart';
 class LoginPageMain extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Login'),
+    return BlocProvider(
+      builder: (context) => LoginBloc(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Login'),
+        ),
+        body: LoginPage(),
       ),
-      body: LoginPage(),
     );
   }
 }
@@ -21,11 +23,14 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-
-  final _loginBloc = LoginBloc();
+  LoginBloc _loginBloc;
+  @override
+  void initState() {
+    super.initState();
+    _loginBloc = BlocProvider.of<LoginBloc>(context);
+  }
 
   @override
   void dispose() {
@@ -40,22 +45,19 @@ class _LoginPageState extends State<LoginPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          BlocBuilder(
-            builder: (context, snapshot) {
-              return TextField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.email),
-                  hintText: 'Input email',
-                  labelText: 'Email'
-                ),
-                onChanged: (email) {
-                  _loginBloc.emailSink.add(email);
-                },
-              );
-            }
+          TextField(
+            controller: _emailController,
+            decoration: InputDecoration(
+                prefixIcon: Icon(Icons.email),
+                hintText: 'Input email',
+                labelText: 'Email'),
+            onChanged: (email) {
+              _loginBloc.emailSink.add(email);
+            },
           ),
-          SizedBox(height: 20,),
+          SizedBox(
+            height: 20,
+          ),
           TextField(
             controller: _passwordController,
             decoration: InputDecoration(
@@ -75,9 +77,7 @@ class _LoginPageState extends State<LoginPage> {
             child: RaisedButton(
               color: Colors.blue,
               child: Text('Login'),
-              onPressed: () {
-
-              },
+              onPressed: () {},
             ),
           ),
         ],

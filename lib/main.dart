@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc_sample/src/checkedListview/check_list_page.dart';
 import 'package:flutter_bloc_sample/src/counter/counter_page.dart';
 import 'package:flutter_bloc_sample/src/infiniteList/post_page.dart';
 import 'package:flutter_bloc_sample/src/listCategory/list_category.dart';
@@ -78,6 +79,13 @@ class _MyHomePageState extends State<MyHomePage> {
             onTap: () {
               Navigator.of(context).pop();
               Navigator.of(context).push(MaterialPageRoute(builder: (context) => ListCategoryPage()));
+            },
+          ),
+          ListTile(
+            title: Text('Check list'),
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => CheckListPage()));
             },
           )
         ],

@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc_sample/src/listCategory/bloc/category.dart';
+import 'package:flutter_bloc_sample/src/repository/list_category_repo.dart';
 import './bloc.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class ListCategoryBloc extends Bloc<ListCategoryEvent, ListCategoryState> {
   @override
@@ -25,15 +24,8 @@ class ListCategoryBloc extends Bloc<ListCategoryEvent, ListCategoryState> {
   // }
 
   Future<List<CategoryFeatured>> _getListCategory() async {
-    final response = await http.get("https://unsplash.com/napi/collections/featured");
-    if (response.statusCode == 200) {
-      final data = jsonDecode(utf8.decode(response.bodyBytes)) as List;
-      return data.map((raw) {
-        return CategoryFeatured.fromJson(raw);
-      }).toList();
-    } else {
-      return [];
-    }
+    final repo = ListCategoryRepo();
+    return await repo.getListCategoryFeatured();
   }
 
   // Future<List<Category>> _getListItemsOfCategory(Category c, List<Category> categories) async {
