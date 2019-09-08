@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc_sample/src/checkedListview/check_model.dart';
+import 'package:rxdart/rxdart.dart';
 
 //================ Input ======================
 abstract class CheckListEvent {}
@@ -17,8 +18,6 @@ class UnCheckedEvent extends CheckListEvent {
   UnCheckedEvent({@required this.index});
 }
 
-class TotalCheckedItemEvent extends CheckListEvent {}
-
 //================ Output ======================
 abstract class CheckListState {}
 
@@ -27,13 +26,15 @@ class InitCheckListState extends CheckListState {}
 class ListStateLoaded extends CheckListState {
   List<CheckModel> items;
   int checkedItem;
-  ListStateLoaded(this.items,this.checkedItem);
+  ListStateLoaded(this.items, this.checkedItem);
 }
 
 class TotalCheckedItem extends CheckListState {
   int total;
   TotalCheckedItem(this.total);
 }
+
+class LimitCheckedItem extends CheckListState {}
 
 //================ Bloc ======================
 class CheckListBloc extends Bloc<CheckListEvent, CheckListState> {
@@ -44,6 +45,7 @@ class CheckListBloc extends Bloc<CheckListEvent, CheckListState> {
   Stream<CheckListState> mapEventToState(CheckListEvent event) async* {
     if (event is FetchListEvent) {
       final datas = await _getData();
+      yield TotalCheckedItem(0);
       yield ListStateLoaded(datas, 0);
     } else if (event is CheckedEvent) {
       yield* _mapCheckedEventToState(event);
@@ -68,7 +70,13 @@ class CheckListBloc extends Bloc<CheckListEvent, CheckListState> {
           _items[i].checked = true;
         }
       }
-      yield ListStateLoaded(_items, _totalCheckedItem());
+      final _total = _totalCheckedItem();
+      if (_total == 5) {
+        yield LimitCheckedItem();
+      } else {
+        yield TotalCheckedItem(_total);
+        yield ListStateLoaded(_items, 0);
+      }
     }
   }
 
@@ -81,7 +89,14 @@ class CheckListBloc extends Bloc<CheckListEvent, CheckListState> {
           _items[i].checked = false;
         }
       }
-      yield ListStateLoaded(_items, _totalCheckedItem());
+
+      final _total = _totalCheckedItem();
+      if (_total == 5) {
+        yield LimitCheckedItem();
+      } else {
+        yield TotalCheckedItem(_total);
+        yield ListStateLoaded(_items, 0);
+      }
     }
   }
 
@@ -96,5 +111,11 @@ class CheckListBloc extends Bloc<CheckListEvent, CheckListState> {
       });
       return total;
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    print("check list bloc be disposed");
   }
 }

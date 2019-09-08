@@ -27,15 +27,32 @@ class _CheckListPageState extends State<CheckListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Check list'),
-        ),
-        body: Container(
+      appBar: AppBar(
+        title: Text('Check list'),
+      ),
+      body: BlocListener(
+        bloc: _bloc,
+        listener: (context, state) {
+          print(state);
+          if (state is LimitCheckedItem) {
+            Future.delayed(Duration(seconds: 1), () {
+              Navigator.of(context).pop();
+            });
+          }
+        },
+        child: Container(
           child: Column(
             children: <Widget>[
               Expanded(
                 child: BlocBuilder(
                   bloc: _bloc,
+                  condition: (preState, curState) {
+                    if (curState is ListStateLoaded) {
+                      return true;
+                    } else {
+                      return false;
+                    }
+                  },
                   builder: (context, state) {
                     if (state is ListStateLoaded) {
                       return Container(
@@ -62,13 +79,21 @@ class _CheckListPageState extends State<CheckListPage> {
               ),
               BlocBuilder(
                 bloc: _bloc,
+                condition: (_, curState) {
+                  if (curState is TotalCheckedItem) {
+                    return true;
+                  }
+                  return false;
+                },
                 builder: (context, state) {
                   return _buildBottomView(state);
                 },
               )
             ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   Widget _buildItemListView(CheckModel data, int index) {
@@ -107,7 +132,7 @@ class _CheckListPageState extends State<CheckListPage> {
   }
 
   Widget _buildBottomView(CheckListState state) {
-    final _total = (state is ListStateLoaded) ? state.checkedItem : 0;
+    final _total = (state is TotalCheckedItem) ? state.total : 0;
     return Container(
       alignment: Alignment.center,
       height: 50,
